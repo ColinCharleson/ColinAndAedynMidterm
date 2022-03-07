@@ -13,8 +13,8 @@
 PlayerController::PlayerController() :
 	IComponent(),
 	_mouseSensitivity({ 0.5f, 0.3f }),
-	_moveSpeeds(glm::vec3(1.0f)),
-	_shiftMultipler(2.0f),
+	_moveSpeeds(glm::vec3(2.0f)),
+	_shiftMultipler(1.5f),
 	_currentRot(glm::vec2(0.0f)),
 	_isMousePressed(false)
 { }
@@ -28,33 +28,37 @@ void PlayerController::Update(float deltaTime)
 			_prevMousePos = InputEngine::GetMousePos();
 			LOG_INFO("doot");
 		}
-
-		
 			
 			glm::vec3 input = glm::vec3(0.0f);
-			if (InputEngine::IsKeyDown(GLFW_KEY_W)) {
-				playerY += 2 * deltaTime;
+			if (InputEngine::IsKeyDown(GLFW_KEY_W))
+			{
+				input.y += _moveSpeeds.x;
 				GetGameObject()->SetRotation(glm::vec3(0, 0, -90));
 			}
-			if (InputEngine::IsKeyDown(GLFW_KEY_S)) {
-				playerY -= 2 * deltaTime;
+			if (InputEngine::IsKeyDown(GLFW_KEY_S))
+			{
+				input.y -= _moveSpeeds.x;
 				GetGameObject()->SetRotation(glm::vec3(0, 0, 90));
 			}
-			if (InputEngine::IsKeyDown(GLFW_KEY_A)) {
-				playerX -= 2 * deltaTime;
+			if (InputEngine::IsKeyDown(GLFW_KEY_A))
+			{
+				input.x -= _moveSpeeds.y;
 				GetGameObject()->SetRotation(glm::vec3(0, 0, 0));
 			}
-			if (InputEngine::IsKeyDown(GLFW_KEY_D)) {
-				playerX += 2 * deltaTime;
+			if (InputEngine::IsKeyDown(GLFW_KEY_D))
+			{
+				input.x += _moveSpeeds.y;
 				GetGameObject()->SetRotation(glm::vec3(0, 0, 180));
 			}
-
-			if (InputEngine::IsKeyDown(GLFW_KEY_LEFT_SHIFT)) {
+			if (InputEngine::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+			{
 				input *= _shiftMultipler;
 			}
 
-			GetGameObject()->SetPostion(glm::vec3(playerX, playerY, 1));
-		
+			input *= deltaTime;
+
+			glm::vec3 worldMovement = glm::vec4(input, 1.0f);
+			GetGameObject()->SetPostion(GetGameObject()->GetPosition() + worldMovement);
 	}
 	_prevMousePos = InputEngine::GetMousePos();
 }

@@ -355,14 +355,24 @@ void DefaultSceneLayer::_CreateScene()
 			renderer->SetMesh(monkeyMesh);
 			renderer->SetMaterial(monkeyMaterial);
 
-			// Example of a trigger that interacts with static and kinematic bodies as well as dynamic bodies
-			TriggerVolume::Sptr trigger = player->Add<TriggerVolume>();
-			trigger->SetFlags(TriggerTypeFlags::Statics | TriggerTypeFlags::Kinematics);
-			trigger->AddCollider(BoxCollider::Create(glm::vec3(1.0f)));
-
-			player->Add<TriggerVolumeEnterBehaviour>();
+			RigidBody::Sptr PlayerRB = player->Add<RigidBody>(RigidBodyType::Dynamic);
+			PlayerRB->AddCollider(BoxCollider::Create(glm::vec3(1, 1, 1)));
+			PlayerRB->SetLinearDamping(500.0f);
 		}
 
+		GameObject::Sptr block = scene->CreateGameObject("Obstacle");
+		{
+			// Set position in the scene
+			block->SetPostion(glm::vec3(5.0f, 5.0f, 1.0f));
+
+			// Create and attach a renderer for the player
+			RenderComponent::Sptr renderer = block->Add<RenderComponent>();
+			renderer->SetMesh(monkeyMesh);
+			renderer->SetMaterial(boxMaterial);
+
+			RigidBody::Sptr blockRB = block->Add<RigidBody>(RigidBodyType::Static);
+			blockRB->AddCollider(BoxCollider::Create(glm::vec3(1, 1, 1)));
+		}
 		/////////////////////////// UI //////////////////////////////
 		/*
 		GameObject::Sptr canvas = scene->CreateGameObject("UI Canvas");

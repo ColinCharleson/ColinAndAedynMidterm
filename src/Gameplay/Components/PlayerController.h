@@ -27,8 +27,7 @@ protected:
 	glm::vec2 _mouseSensitivity;
 	glm::vec3 _moveSpeeds;
 	glm::dvec2 _prevMousePos;
-	glm::vec2 _currentRot;
+	glm::vec2 _currentRot; 
 
-	float playerX = 0, playerY = 0;
 	bool _isMousePressed = false;
 };
