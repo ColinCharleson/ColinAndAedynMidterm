@@ -67,7 +67,7 @@ void PlayerController::Update(float deltaTime)
 			glm::vec3 worldMovement = glm::vec4(input, 1.0f);
 			GetGameObject()->SetPostion(GetGameObject()->GetPosition() + worldMovement);
 
-			if (playerScore >= 11)
+			if (playerScore >= 16)
 			{
 				std::cout << "You Win" << std::endl;
 			}

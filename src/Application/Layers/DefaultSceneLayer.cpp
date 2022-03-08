@@ -297,7 +297,7 @@ void DefaultSceneLayer::_CreateScene()
 		}
 
 		// Create some lights for our scene
-		/*GameObject::Sptr lightParent = scene->CreateGameObject("Lights");
+		GameObject::Sptr lightParent = scene->CreateGameObject("Lights");
 
 		for (int ix = 0; ix < 50; ix++) {
 			GameObject::Sptr light = scene->CreateGameObject("Light");
@@ -306,9 +306,9 @@ void DefaultSceneLayer::_CreateScene()
 
 			Light::Sptr lightComponent = light->Add<Light>();
 			lightComponent->SetColor(glm::linearRand(glm::vec3(1.0f), glm::vec3(1.0f)));
-			lightComponent->SetRadius(glm::linearRand(0.1f, 10.0f));
-			lightComponent->SetIntensity(glm::linearRand(1.0f, 2.0f));
-		}*/
+			lightComponent->SetRadius(glm::linearRand(200.0f, 200.0f));
+			lightComponent->SetIntensity(glm::linearRand(0.1f, 0.4f));
+		}
 
 		// We'll create a mesh that is a simple plane that we can resize later
 		MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>();
@@ -507,6 +507,104 @@ void DefaultSceneLayer::_CreateScene()
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy5->Add<Light>();
+				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
+				lightComponent->SetRadius(5);
+				lightComponent->SetIntensity(1);
+			}
+		}
+		// Row 3 of enemies
+		{
+			GameObject::Sptr enemy13 = scene->CreateGameObject("enemy13");
+			{
+				// Set position in the scene
+				enemy13->SetPostion(glm::vec3(-8.0f, 8.0f, 1.0f));
+				enemy13->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy13->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy13->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+				Light::Sptr lightComponent = enemy13->Add<Light>();
+				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
+				lightComponent->SetRadius(5);
+				lightComponent->SetIntensity(1);
+			}
+			GameObject::Sptr enemy23 = scene->CreateGameObject("enemy23");
+			{
+				// Set position in the scene
+				enemy23->SetPostion(glm::vec3(-4.0f, 8.0f, 1.0f));
+				enemy23->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy23->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy23->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+				Light::Sptr lightComponent = enemy23->Add<Light>();
+				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
+				lightComponent->SetRadius(5);
+				lightComponent->SetIntensity(1);
+			}
+			GameObject::Sptr enemy33 = scene->CreateGameObject("enemy33");
+			{
+				// Set position in the scene
+				enemy33->SetPostion(glm::vec3(0.0f, 8.0f, 1.0f));
+				enemy33->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy33->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy33->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+				Light::Sptr lightComponent = enemy33->Add<Light>();
+				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
+				lightComponent->SetRadius(5);
+				lightComponent->SetIntensity(1);
+			}
+			GameObject::Sptr enemy43 = scene->CreateGameObject("enemy43");
+			{
+				// Set position in the scene
+				enemy43->SetPostion(glm::vec3(4.0f, 8.0f, 1.0f));
+				enemy43->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy43->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy43->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+				Light::Sptr lightComponent = enemy43->Add<Light>();
+				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
+				lightComponent->SetRadius(5);
+				lightComponent->SetIntensity(1);
+			}
+			GameObject::Sptr enemy53 = scene->CreateGameObject("enemy53");
+			{
+				// Set position in the scene
+				enemy53->SetPostion(glm::vec3(8.0f, 8.0f, 1.0f));
+				enemy53->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy53->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy53->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+				Light::Sptr lightComponent = enemy53->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
 				lightComponent->SetIntensity(1);
