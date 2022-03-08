@@ -25,6 +25,7 @@ extern float boltX, boltY, boltZ;
 extern int playerScore;
 extern bool boltOut;
 extern bool canShoot;
+extern int gameState;
 
 float moveTimer;
 bool moveLeft = true;
@@ -58,7 +59,7 @@ void EnemyScript::Update(float deltaTime)
 
 	if (GetGameObject()->GetPosition().y <= -9)
 	{
-		std::cout << "GAME OVER" << std::endl;
+		 gameState = 1;
 	}
 }
 

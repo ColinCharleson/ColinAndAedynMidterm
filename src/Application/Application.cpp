@@ -40,6 +40,8 @@
 #include "Gameplay/Components/RenderComponent.h"
 #include "Gameplay/Components/MaterialSwapBehaviour.h"
 #include "Gameplay/Components/TriggerVolumeEnterBehaviour.h"
+#include "Gameplay/Components/WinScreenBehaviour.h"
+#include "Gameplay/Components/LoseScreenBehaviour.h"
 #include "Gameplay/Components/SimpleCameraControl.h"
 #include "Gameplay/Components/PlayerController.h"
 #include "Gameplay/Components/EnemyScript.h"
@@ -185,7 +187,6 @@ void Application::_Run()
 
 	// Done loading, app is now running!
 	_isRunning = true;
-
 	// Infinite loop as long as the application is running
 	while (_isRunning) {
 		// Handle scene switching
@@ -193,6 +194,22 @@ void Application::_Run()
 			_HandleSceneChange();
 		}
 
+		if (InputEngine::IsKeyDown(GLFW_KEY_1))
+		{
+
+		}if (InputEngine::IsKeyDown(GLFW_KEY_2))
+		{
+
+		}if (InputEngine::IsKeyDown(GLFW_KEY_3))
+		{
+
+		}if (InputEngine::IsKeyDown(GLFW_KEY_4))
+		{
+
+		}if (InputEngine::IsKeyDown(GLFW_KEY_5))
+		{
+
+		}
 		// Receive events like input and window position/size changes from GLFW
 		glfwPollEvents();
 
@@ -280,6 +297,8 @@ void Application::_RegisterClasses()
 	ComponentManager::RegisterType<GuiText>();
 	ComponentManager::RegisterType<ParticleSystem>();
 	ComponentManager::RegisterType<Light>();
+	ComponentManager::RegisterType<WinScreen>();
+	ComponentManager::RegisterType<LoseScreen>();
 }
 
 void Application::_Load() {

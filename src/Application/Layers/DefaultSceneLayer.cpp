@@ -41,6 +41,8 @@
 
 // Components
 #include "Gameplay/Components/IComponent.h"
+#include "Gameplay/Components/WinScreenBehaviour.h"
+#include "Gameplay/Components/LoseScreenBehaviour.h"
 #include "Gameplay/Components/Camera.h"
 #include "Gameplay/Components/RotatingBehaviour.h"
 #include "Gameplay/Components/JumpBehaviour.h"
@@ -78,7 +80,7 @@
  int playerScore;
  bool boltOut;
  bool canShoot;
-
+ int gameState = 0; // 0 = playing, 1 = lost, 2 = win
 DefaultSceneLayer::DefaultSceneLayer() :
 	ApplicationLayer()
 {
@@ -148,6 +150,8 @@ void DefaultSceneLayer::_CreateScene()
 
 		// Load in some textures
 		Texture2D::Sptr    boxTexture   = ResourceManager::CreateAsset<Texture2D>("textures/box-diffuse.png");
+		Texture2D::Sptr    LoseScreenTex   = ResourceManager::CreateAsset<Texture2D>("textures/LoseScreen.png");
+		Texture2D::Sptr    WinScreenTex   = ResourceManager::CreateAsset<Texture2D>("textures/WinScreen.png");
 		Texture2D::Sptr    boxSpec      = ResourceManager::CreateAsset<Texture2D>("textures/box-specular.png");
 		Texture2D::Sptr    monkeyTex    = ResourceManager::CreateAsset<Texture2D>("textures/monkey-uvMap.png");
 		Texture2D::Sptr    leafTex      = ResourceManager::CreateAsset<Texture2D>("textures/leaves.png");
@@ -211,6 +215,31 @@ void DefaultSceneLayer::_CreateScene()
 			boxMaterial->Set("u_Material.AlbedoMap", boxTexture);
 			boxMaterial->Set("u_Material.Shininess", 0.1f);
 			boxMaterial->Set("u_Material.NormalMap", normalMapDefault);
+		}
+
+		Material::Sptr invaderMaterial = ResourceManager::CreateAsset<Material>(deferredForward);
+		{
+			Texture2D::Sptr iglossyMap = ResourceManager::CreateAsset<Texture2D>("textures/Space Invaders_Invader_Glossiness.png");
+			Texture2D::Sptr inormalMap = ResourceManager::CreateAsset<Texture2D>("textures/Space Invaders_Invader_Normal.png");
+			Texture2D::Sptr idiffuseMap = ResourceManager::CreateAsset<Texture2D>("textures/Space Invaders_Invader_Diffuse.png");
+
+			invaderMaterial->Name = "Displacement Map";
+			invaderMaterial->Set("u_Material.AlbedoMap", idiffuseMap);
+			invaderMaterial->Set("u_Material.NormalMap", inormalMap);
+			invaderMaterial->Set("u_Material.GlossinessMap", iglossyMap);
+		}
+		Material::Sptr tankMaterial = ResourceManager::CreateAsset<Material>(deferredForward);
+		{
+			Texture2D::Sptr tglossyMap = ResourceManager::CreateAsset<Texture2D>("textures/Space Invaders_Tank_Glossiness.png");
+			Texture2D::Sptr tnormalMap = ResourceManager::CreateAsset<Texture2D>("textures/Space Invaders_Tank_Normal.png");
+			Texture2D::Sptr tdiffuseMap = ResourceManager::CreateAsset<Texture2D>("textures/Space Invaders_Tank_Diffuse.png");
+
+			tankMaterial->Name = "Displacement Map";
+			tankMaterial->Set("u_Material.AlbedoMap", tdiffuseMap);
+			tankMaterial->Set("u_Material.NormalMap", tnormalMap);
+			tankMaterial->Set("u_Material.GlossinessMap", tglossyMap);
+			tankMaterial->Set("u_Material.Shininess", 0.5f);
+			tankMaterial->Set("u_Scale", 0.1f);
 		}
 
 		// This will be the reflective material, we'll make the whole thing 90% reflective
@@ -303,12 +332,12 @@ void DefaultSceneLayer::_CreateScene()
 
 		for (int ix = 0; ix < 50; ix++) {
 			GameObject::Sptr light = scene->CreateGameObject("Light");
-			light->SetPostion(glm::vec3(glm::diskRand(25.0f), 1.0f));
+			light->SetPostion(glm::vec3(glm::diskRand(25.0f), 6.0f));
 			lightParent->AddChild(light);
 
 			Light::Sptr lightComponent = light->Add<Light>();
 			lightComponent->SetColor(glm::linearRand(glm::vec3(1.0f), glm::vec3(1.0f)));
-			lightComponent->SetRadius(glm::linearRand(200.0f, 200.0f));
+			lightComponent->SetRadius(glm::linearRand(10.0f, 30.0f));
 			lightComponent->SetIntensity(glm::linearRand(0.1f, 0.4f));
 		}
 
@@ -348,7 +377,7 @@ void DefaultSceneLayer::_CreateScene()
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = plane->Add<RenderComponent>();
 			renderer->SetMesh(tiledMesh);
-			renderer->SetMaterial(boxMaterial);
+			renderer->SetMaterial(displacementTest);
 		}
 		GameObject::Sptr floor = scene->CreateGameObject("Floor");
 		{
@@ -378,7 +407,7 @@ void DefaultSceneLayer::_CreateScene()
 			// Create and attach a renderer for the player
 			RenderComponent::Sptr renderer = player->Add<RenderComponent>();
 			renderer->SetMesh(tankMesh);
-			renderer->SetMaterial(monkeyMaterial);
+			renderer->SetMaterial(tankMaterial);
 
 			RigidBody::Sptr PlayerRB = player->Add<RigidBody>(RigidBodyType::Dynamic);
 			PlayerRB->AddCollider(BoxCollider::Create(glm::vec3(1, 1, 1)));
@@ -403,12 +432,13 @@ void DefaultSceneLayer::_CreateScene()
 			// Create and attach a renderer for the player
 			RenderComponent::Sptr renderer = bolt->Add<RenderComponent>();
 			renderer->SetMesh(monkeyMesh);
-			renderer->SetMaterial(monkeyMaterial);
+			renderer->SetMaterial(tankMaterial);
 
 			Light::Sptr lightComponent = bolt->Add<Light>();
 			lightComponent->SetColor(glm::vec3(0.0f, 1.0f, 0.0f));
 			lightComponent->SetRadius(2);
 			lightComponent->SetIntensity(2);
+
 		}
 
 		GameObject::Sptr RightWall = scene->CreateGameObject("RightWall");
@@ -444,7 +474,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy1->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy1->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -464,7 +494,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy2->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy2->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -484,7 +514,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy3->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy3->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -504,7 +534,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy4->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy4->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -524,7 +554,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy5->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy5->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -547,7 +577,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy13->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy13->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -567,7 +597,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy23->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy23->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -587,7 +617,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy33->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy33->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -607,7 +637,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy43->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy43->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -627,7 +657,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy53->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy53->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -649,7 +679,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy12->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy12->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -669,7 +699,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy22->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy22->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -689,7 +719,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy32->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy32->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -709,7 +739,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy42->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy42->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -728,7 +758,7 @@ void DefaultSceneLayer::_CreateScene()
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy52->Add<RenderComponent>();
 				renderer->SetMesh(invaderMesh);
-				renderer->SetMaterial(monkeyMaterial);
+				renderer->SetMaterial(invaderMaterial);
 
 				Light::Sptr lightComponent = enemy52->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -749,7 +779,7 @@ void DefaultSceneLayer::_CreateScene()
 			// Create and attach a renderer for the player
 			RenderComponent::Sptr renderer = topShip->Add<RenderComponent>();
 			renderer->SetMesh(invaderMesh);
-			renderer->SetMaterial(monkeyMaterial);
+			renderer->SetMaterial(invaderMaterial);
 
 			Light::Sptr lightComponent = topShip->Add<Light>();
 			lightComponent->SetColor(glm::vec3(1.0f, 0.8f, 0.0f));
@@ -757,6 +787,41 @@ void DefaultSceneLayer::_CreateScene()
 			lightComponent->SetIntensity(2);
 		}
 		/////////////////////////// UI //////////////////////////////
+
+		GameObject::Sptr WinnerScreen = scene->CreateGameObject("Winner Screen");
+		{
+			RectTransform::Sptr transform = WinnerScreen->Add<RectTransform>();
+			transform->SetMin({ 1920, 1080 });
+			transform->SetMax({ 0, 0 });
+			transform->SetPosition(glm::vec2(960, 540));
+
+			GuiPanel::Sptr testPanel = WinnerScreen->Add<GuiPanel>();
+			//testPanel->SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			testPanel->SetTexture(WinScreenTex);
+			testPanel->SetBorderRadius(1920); //Tinker with 
+			testPanel->IsEnabled = false;
+
+			WinnerScreen->Add <WinScreen>();
+			WinnerScreen->Get<WinScreen>()->testPanel = testPanel;
+		}
+
+		GameObject::Sptr LostScreen = scene->CreateGameObject("Lose Screen");
+		{
+			RectTransform::Sptr transform = LostScreen->Add<RectTransform>();
+			transform->SetMin({ 1920, 1080 });
+			transform->SetMax({ 0, 0 });
+			transform->SetPosition(glm::vec2(960, 540));
+
+			GuiPanel::Sptr imageLose = LostScreen->Add<GuiPanel>();
+			//testPanel->SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			imageLose->SetTexture(LoseScreenTex);
+			imageLose->SetBorderRadius(1920); //Tinker with 
+			imageLose->IsEnabled = false;
+
+			LostScreen->Add<LoseScreen>();
+			LostScreen->Get<LoseScreen>()->imageLose = imageLose;
+
+		}
 		/*
 		GameObject::Sptr canvas = scene->CreateGameObject("UI Canvas");
 		{

@@ -24,7 +24,7 @@ extern float boltX, boltY, boltZ;
 extern int playerScore;
 extern bool boltOut;
 extern bool canShoot;
-
+extern int gameState;
 PlayerController::~PlayerController() = default;
 
 void PlayerController::Update(float deltaTime)
@@ -54,6 +54,7 @@ void PlayerController::Update(float deltaTime)
 			{
 				input.x += _moveSpeeds.y;
 			}
+
 			/*if (InputEngine::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
 			{
 				input *= _shiftMultipler;
@@ -69,7 +70,7 @@ void PlayerController::Update(float deltaTime)
 
 			if (playerScore >= 16)
 			{
-				std::cout << "You Win" << std::endl;
+				gameState = 2;
 			}
 	}
 	_prevMousePos = InputEngine::GetMousePos();
