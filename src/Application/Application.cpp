@@ -42,6 +42,8 @@
 #include "Gameplay/Components/TriggerVolumeEnterBehaviour.h"
 #include "Gameplay/Components/SimpleCameraControl.h"
 #include "Gameplay/Components/PlayerController.h"
+#include "Gameplay/Components/EnemyScript.h"
+#include "Gameplay/Components/Bolt.h"
 #include "Gameplay/Components/ParticleSystem.h"
 #include "Gameplay/Components/Light.h"
 
@@ -265,6 +267,8 @@ void Application::_RegisterClasses()
 	ComponentManager::RegisterType<TriggerVolume>();
 	ComponentManager::RegisterType<RotatingBehaviour>();
 	ComponentManager::RegisterType<PlayerController>();
+	ComponentManager::RegisterType<EnemyScript>();
+	ComponentManager::RegisterType<Bolt>();
 	ComponentManager::RegisterType<JumpBehaviour>();
 	ComponentManager::RegisterType<MaterialSwapBehaviour>();
 	ComponentManager::RegisterType<TriggerVolumeEnterBehaviour>();

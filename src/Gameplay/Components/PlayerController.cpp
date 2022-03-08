@@ -13,11 +13,17 @@
 PlayerController::PlayerController() :
 	IComponent(),
 	_mouseSensitivity({ 0.5f, 0.3f }),
-	_moveSpeeds(glm::vec3(2.0f)),
+	_moveSpeeds(glm::vec3(4.0f)),
 	_shiftMultipler(1.5f),
 	_currentRot(glm::vec2(0.0f)),
 	_isMousePressed(false)
 { }
+
+extern float playerX, playerY;
+extern float boltX, boltY, boltZ;
+extern int playerScore;
+extern bool boltOut;
+extern bool canShoot;
 
 PlayerController::~PlayerController() = default;
 
@@ -30,7 +36,7 @@ void PlayerController::Update(float deltaTime)
 		}
 			
 			glm::vec3 input = glm::vec3(0.0f);
-			if (InputEngine::IsKeyDown(GLFW_KEY_W))
+			/*if (InputEngine::IsKeyDown(GLFW_KEY_W))
 			{
 				input.y += _moveSpeeds.x;
 				GetGameObject()->SetRotation(glm::vec3(0, 0, -90));
@@ -39,26 +45,32 @@ void PlayerController::Update(float deltaTime)
 			{
 				input.y -= _moveSpeeds.x;
 				GetGameObject()->SetRotation(glm::vec3(0, 0, 90));
-			}
+			}*/
 			if (InputEngine::IsKeyDown(GLFW_KEY_A))
 			{
 				input.x -= _moveSpeeds.y;
-				GetGameObject()->SetRotation(glm::vec3(0, 0, 0));
 			}
 			if (InputEngine::IsKeyDown(GLFW_KEY_D))
 			{
 				input.x += _moveSpeeds.y;
-				GetGameObject()->SetRotation(glm::vec3(0, 0, 180));
 			}
-			if (InputEngine::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+			/*if (InputEngine::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
 			{
 				input *= _shiftMultipler;
-			}
+			}*/
 
 			input *= deltaTime;
 
+			playerX = GetGameObject()->GetPosition().x;
+			playerY = GetGameObject()->GetPosition().y;
+
 			glm::vec3 worldMovement = glm::vec4(input, 1.0f);
 			GetGameObject()->SetPostion(GetGameObject()->GetPosition() + worldMovement);
+
+			if (playerScore >= 11)
+			{
+				std::cout << "You Win" << std::endl;
+			}
 	}
 	_prevMousePos = InputEngine::GetMousePos();
 }

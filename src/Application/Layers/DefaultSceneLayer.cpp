@@ -49,6 +49,8 @@
 #include "Gameplay/Components/TriggerVolumeEnterBehaviour.h"
 #include "Gameplay/Components/SimpleCameraControl.h"
 #include "Gameplay/Components/PlayerController.h"
+#include "Gameplay/Components/EnemyScript.h"
+#include "Gameplay/Components/Bolt.h"
 // Physics
 #include "Gameplay/Physics/RigidBody.h"
 #include "Gameplay/Physics/Colliders/BoxCollider.h"
@@ -69,6 +71,12 @@
 #include "Gameplay/Components/ParticleSystem.h"
 #include "Graphics/Textures/Texture3D.h"
 #include "Graphics/Textures/Texture1D.h"
+
+ float playerX, playerY;
+ float boltX, boltY, boltZ;
+ int playerScore;
+ bool boltOut;
+ bool canShoot;
 
 DefaultSceneLayer::DefaultSceneLayer() :
 	ApplicationLayer()
@@ -345,7 +353,8 @@ void DefaultSceneLayer::_CreateScene()
 		GameObject::Sptr player = scene->CreateGameObject("Player");
 		{
 			// Set position in the scene
-			player->SetPostion(glm::vec3(0.0f, 0.0f, 1.0f));
+			player->SetPostion(glm::vec3(0.0f, -11.0f, 1.0f));
+			player->SetRotation(glm::vec3(0.0f, 0.0f, -90.0f));
 
 			// Add some behaviour that relies on the physics body
 			player->Add<PlayerController>();
@@ -359,19 +368,208 @@ void DefaultSceneLayer::_CreateScene()
 			PlayerRB->AddCollider(BoxCollider::Create(glm::vec3(1, 1, 1)));
 			PlayerRB->SetLinearDamping(500.0f);
 		}
-
-		GameObject::Sptr block = scene->CreateGameObject("Obstacle");
+		GameObject::Sptr bolt = scene->CreateGameObject("bolt");
 		{
 			// Set position in the scene
-			block->SetPostion(glm::vec3(5.0f, 5.0f, 1.0f));
+			bolt->SetPostion(glm::vec3(0.0f, -11.0f, 1.0f));
+			bolt->SetRotation(glm::vec3(0.0f, 0.0f, -90.0f));
+			bolt->SetScale(glm::vec3(0.01f, 0.01f, 0.01f));
+
+			// Add some behaviour that relies on the physics body
+			bolt->Add<Bolt>();
 
 			// Create and attach a renderer for the player
-			RenderComponent::Sptr renderer = block->Add<RenderComponent>();
+			RenderComponent::Sptr renderer = bolt->Add<RenderComponent>();
 			renderer->SetMesh(monkeyMesh);
-			renderer->SetMaterial(boxMaterial);
+			renderer->SetMaterial(monkeyMaterial);
 
-			RigidBody::Sptr blockRB = block->Add<RigidBody>(RigidBodyType::Static);
-			blockRB->AddCollider(BoxCollider::Create(glm::vec3(1, 1, 1)));
+		}
+
+		GameObject::Sptr RightWall = scene->CreateGameObject("RightWall");
+		{
+			// Set position in the scene
+			RightWall->SetPostion(glm::vec3(27.0f, -11.0f, 1.0f));
+
+
+			RigidBody::Sptr blockRB = RightWall->Add<RigidBody>(RigidBodyType::Static);
+			blockRB->AddCollider(BoxCollider::Create(glm::vec3(2, 2, 2)));
+		}
+		GameObject::Sptr LeftWall = scene->CreateGameObject("LeftWall");
+		{
+			// Set position in the scene
+			LeftWall->SetPostion(glm::vec3(-27.0f, -11.0f, 1.0f));
+
+
+			RigidBody::Sptr blockRB = LeftWall->Add<RigidBody>(RigidBodyType::Static);
+			blockRB->AddCollider(BoxCollider::Create(glm::vec3(2, 2, 2)));
+		}
+		// Row 1 of enemies
+		{
+			GameObject::Sptr enemy1 = scene->CreateGameObject("Enemy1");
+			{
+				// Set position in the scene
+				enemy1->SetPostion(glm::vec3(-20.0f, 0.0f, 1.0f));
+				enemy1->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy1->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy1->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy2 = scene->CreateGameObject("Enemy2");
+			{
+				// Set position in the scene
+				enemy2->SetPostion(glm::vec3(-16.0f, 0.0f, 1.0f));
+				enemy2->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy2->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy2->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy3 = scene->CreateGameObject("enemy3");
+			{
+				// Set position in the scene
+				enemy3->SetPostion(glm::vec3(-12.0f, 0.0f, 1.0f));
+				enemy3->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy3->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy3->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy4 = scene->CreateGameObject("enemy4");
+			{
+				// Set position in the scene
+				enemy4->SetPostion(glm::vec3(-8.0f, 0.0f, 1.0f));
+				enemy4->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy4->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy4->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy5 = scene->CreateGameObject("enemy5");
+			{
+				// Set position in the scene
+				enemy5->SetPostion(glm::vec3(-4.0f, 0.0f, 1.0f));
+				enemy5->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy5->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy5->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy6 = scene->CreateGameObject("enemy6");
+			{
+				// Set position in the scene
+				enemy6->SetPostion(glm::vec3(0.0f, 0.0f, 1.0f));
+				enemy6->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy6->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy6->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy7 = scene->CreateGameObject("enemy7");
+			{
+				// Set position in the scene
+				enemy7->SetPostion(glm::vec3(20.0f, 0.0f, 1.0f));
+				enemy7->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy7->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy7->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy8 = scene->CreateGameObject("enemy8");
+			{
+				// Set position in the scene
+				enemy8->SetPostion(glm::vec3(16.0f, 0.0f, 1.0f));
+				enemy8->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy8->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy8->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy9 = scene->CreateGameObject("enemy9");
+			{
+				// Set position in the scene
+				enemy9->SetPostion(glm::vec3(12.0f, 0.0f, 1.0f));
+				enemy9->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy9->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy9->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy10 = scene->CreateGameObject("enemy10");
+			{
+				// Set position in the scene
+				enemy10->SetPostion(glm::vec3(8.0f, 0.0f, 1.0f));
+				enemy10->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy10->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy10->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
+			GameObject::Sptr enemy11 = scene->CreateGameObject("enemy11");
+			{
+				// Set position in the scene
+				enemy11->SetPostion(glm::vec3(4.0f, 0.0f, 1.0f));
+				enemy11->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+
+				// Add some behaviour that relies on the physics body
+				enemy11->Add<EnemyScript>();
+
+				// Create and attach a renderer for the player
+				RenderComponent::Sptr renderer = enemy11->Add<RenderComponent>();
+				renderer->SetMesh(monkeyMesh);
+				renderer->SetMaterial(monkeyMaterial);
+
+			}
 		}
 		/////////////////////////// UI //////////////////////////////
 		/*
