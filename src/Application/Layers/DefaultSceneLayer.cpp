@@ -142,6 +142,8 @@ void DefaultSceneLayer::_CreateScene()
 
 
 		// Load in the meshes
+		MeshResource::Sptr tankMesh = ResourceManager::CreateAsset<MeshResource>("Tank.obj");
+		MeshResource::Sptr invaderMesh = ResourceManager::CreateAsset<MeshResource>("Invader.obj");
 		MeshResource::Sptr monkeyMesh = ResourceManager::CreateAsset<MeshResource>("Monkey.obj");
 
 		// Load in some textures
@@ -334,7 +336,7 @@ void DefaultSceneLayer::_CreateScene()
 		}
 
 		// Set up all our sample objects
-		GameObject::Sptr plane = scene->CreateGameObject("Plane");
+		GameObject::Sptr plane = scene->CreateGameObject("wall");
 		{
 			// Make a big tiled mesh
 			MeshResource::Sptr tiledMesh = ResourceManager::CreateAsset<MeshResource>();
@@ -345,24 +347,35 @@ void DefaultSceneLayer::_CreateScene()
 			RenderComponent::Sptr renderer = plane->Add<RenderComponent>();
 			renderer->SetMesh(tiledMesh);
 			renderer->SetMaterial(boxMaterial);
+		}
+		GameObject::Sptr floor = scene->CreateGameObject("Floor");
+		{
+			floor->SetPostion(glm::vec3(0, -11, 0));
+			floor->SetRotation(glm::vec3(-90, 0, 0));
+			floor->SetScale(glm::vec3(4, 1, 1));
+			// Make a big tiled mesh
+			MeshResource::Sptr tiledMesh = ResourceManager::CreateAsset<MeshResource>();
+			tiledMesh->AddParam(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(100.0f), glm::vec2(20.0f)));
+			tiledMesh->GenerateMesh();
 
-			// Attach a plane collider that extends infinitely along the X/Y axis
-			RigidBody::Sptr physics = plane->Add<RigidBody>(/*static by default*/);
-			physics->AddCollider(BoxCollider::Create(glm::vec3(50.0f, 50.0f, 1.0f)))->SetPosition({ 0,0,-1 });
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = floor->Add<RenderComponent>();
+			renderer->SetMesh(tiledMesh);
+			renderer->SetMaterial(multiTextureMat);
 		}
 
 		GameObject::Sptr player = scene->CreateGameObject("Player");
 		{
 			// Set position in the scene
 			player->SetPostion(glm::vec3(0.0f, -11.0f, 1.0f));
-			player->SetRotation(glm::vec3(0.0f, 0.0f, -90.0f));
-
+			player->SetRotation(glm::vec3(-90.0f, 90.0f, -90.0f));
+			player->SetScale(glm::vec3(0.4f, 0.4f, 0.4f));
 			// Add some behaviour that relies on the physics body
 			player->Add<PlayerController>();
 
 			// Create and attach a renderer for the player
 			RenderComponent::Sptr renderer = player->Add<RenderComponent>();
-			renderer->SetMesh(monkeyMesh);
+			renderer->SetMesh(tankMesh);
 			renderer->SetMaterial(monkeyMaterial);
 
 			RigidBody::Sptr PlayerRB = player->Add<RigidBody>(RigidBodyType::Dynamic);
@@ -420,14 +433,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy1->SetPostion(glm::vec3(-8.0f, 0.0f, 1.0f));
-				enemy1->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy1->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy1->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy1->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy1->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy1->Add<Light>();
@@ -439,14 +453,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy2->SetPostion(glm::vec3(-4.0f, 0.0f, 1.0f));
-				enemy2->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy2->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy2->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy2->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy2->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy2->Add<Light>();
@@ -458,14 +473,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy3->SetPostion(glm::vec3(0.0f, 0.0f, 1.0f));
-				enemy3->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy3->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy3->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy3->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy3->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy3->Add<Light>();
@@ -477,14 +493,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy4->SetPostion(glm::vec3(4.0f, 0.0f, 1.0f));
-				enemy4->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy4->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy4->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy4->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy4->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy4->Add<Light>();
@@ -496,14 +513,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy5->SetPostion(glm::vec3(8.0f, 0.0f, 1.0f));
-				enemy5->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy5->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy5->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy5->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy5->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy5->Add<Light>();
@@ -518,14 +536,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy13->SetPostion(glm::vec3(-8.0f, 8.0f, 1.0f));
-				enemy13->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy13->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy13->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy13->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy13->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy13->Add<Light>();
@@ -537,14 +556,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy23->SetPostion(glm::vec3(-4.0f, 8.0f, 1.0f));
-				enemy23->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy23->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy23->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy23->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy23->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy23->Add<Light>();
@@ -556,14 +576,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy33->SetPostion(glm::vec3(0.0f, 8.0f, 1.0f));
-				enemy33->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy33->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy33->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy33->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy33->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy33->Add<Light>();
@@ -575,14 +596,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy43->SetPostion(glm::vec3(4.0f, 8.0f, 1.0f));
-				enemy43->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy43->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy43->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy43->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy43->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy43->Add<Light>();
@@ -594,14 +616,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy53->SetPostion(glm::vec3(8.0f, 8.0f, 1.0f));
-				enemy53->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy53->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy53->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy53->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy53->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy53->Add<Light>();
@@ -616,14 +639,14 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy12->SetPostion(glm::vec3(-8.0f, 4.0f, 1.0f));
-				enemy12->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
-
+				enemy12->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy12->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 				// Add some behaviour that relies on the physics body
 				enemy12->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy12->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy12->Add<Light>();
@@ -635,14 +658,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy22->SetPostion(glm::vec3(-4.0f, 4.0f, 1.0f));
-				enemy22->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy22->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy22->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy22->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy22->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy22->Add<Light>();
@@ -654,14 +678,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy32->SetPostion(glm::vec3(0.0f, 4.0f, 1.0f));
-				enemy32->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy32->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy32->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy32->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy32->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy32->Add<Light>();
@@ -673,14 +698,15 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy42->SetPostion(glm::vec3(4.0f, 4.0f, 1.0f));
-				enemy42->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+				enemy42->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy42->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 
 				// Add some behaviour that relies on the physics body
 				enemy42->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy42->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy42->Add<Light>();
@@ -692,14 +718,14 @@ void DefaultSceneLayer::_CreateScene()
 			{
 				// Set position in the scene
 				enemy52->SetPostion(glm::vec3(8.0f, 4.0f, 1.0f));
-				enemy52->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
-
+				enemy52->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+				enemy52->SetScale(glm::vec3(0.3f, 0.3f, 0.3f));
 				// Add some behaviour that relies on the physics body
 				enemy52->Add<EnemyScript>();
 
 				// Create and attach a renderer for the player
 				RenderComponent::Sptr renderer = enemy52->Add<RenderComponent>();
-				renderer->SetMesh(monkeyMesh);
+				renderer->SetMesh(invaderMesh);
 				renderer->SetMaterial(monkeyMaterial);
 
 				Light::Sptr lightComponent = enemy52->Add<Light>();
@@ -712,14 +738,15 @@ void DefaultSceneLayer::_CreateScene()
 		{
 			// Set position in the scene
 			topShip->SetPostion(glm::vec3(9.0f, 12.0f, 1.0f));
-			topShip->SetRotation(glm::vec3(0.0f, 0.0f, 90.0f));
+			topShip->SetRotation(glm::vec3(90.0f, -90.0f, -90.0f));
+			topShip->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
 
 			// Add some behaviour that relies on the physics body
 			topShip->Add<TopEnemyScript>();
 
 			// Create and attach a renderer for the player
 			RenderComponent::Sptr renderer = topShip->Add<RenderComponent>();
-			renderer->SetMesh(monkeyMesh);
+			renderer->SetMesh(invaderMesh);
 			renderer->SetMaterial(monkeyMaterial);
 
 			Light::Sptr lightComponent = topShip->Add<Light>();
