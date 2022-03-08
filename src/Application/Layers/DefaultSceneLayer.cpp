@@ -338,6 +338,8 @@ void DefaultSceneLayer::_CreateScene()
 		// Set up all our sample objects
 		GameObject::Sptr plane = scene->CreateGameObject("wall");
 		{
+			plane->SetPostion(glm::vec3(0, -1, -2));
+			plane->SetScale(glm::vec3(1, 1, 1));
 			// Make a big tiled mesh
 			MeshResource::Sptr tiledMesh = ResourceManager::CreateAsset<MeshResource>();
 			tiledMesh->AddParam(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(100.0f), glm::vec2(20.0f)));
@@ -385,7 +387,7 @@ void DefaultSceneLayer::_CreateScene()
 			Light::Sptr lightComponent = player->Add<Light>();
 			lightComponent->SetColor(glm::vec3(0.0f,1.0f,0.0f));
 			lightComponent->SetRadius(5);
-			lightComponent->SetIntensity(1);
+			lightComponent->SetIntensity(2);
 
 		}
 		GameObject::Sptr bolt = scene->CreateGameObject("bolt");
@@ -406,7 +408,7 @@ void DefaultSceneLayer::_CreateScene()
 			Light::Sptr lightComponent = bolt->Add<Light>();
 			lightComponent->SetColor(glm::vec3(0.0f, 1.0f, 0.0f));
 			lightComponent->SetRadius(2);
-			lightComponent->SetIntensity(1);
+			lightComponent->SetIntensity(2);
 		}
 
 		GameObject::Sptr RightWall = scene->CreateGameObject("RightWall");
@@ -447,7 +449,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy1->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy2 = scene->CreateGameObject("enemy2");
 			{
@@ -467,7 +469,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy2->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy3 = scene->CreateGameObject("enemy3");
 			{
@@ -487,7 +489,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy3->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy4 = scene->CreateGameObject("enemy4");
 			{
@@ -507,7 +509,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy4->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy5 = scene->CreateGameObject("enemy5");
 			{
@@ -527,7 +529,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy5->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 		}
 		// Row 3 of enemies
@@ -550,7 +552,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy13->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy23 = scene->CreateGameObject("enemy23");
 			{
@@ -570,7 +572,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy23->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy33 = scene->CreateGameObject("enemy33");
 			{
@@ -590,7 +592,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy33->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy43 = scene->CreateGameObject("enemy43");
 			{
@@ -610,7 +612,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy43->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy53 = scene->CreateGameObject("enemy53");
 			{
@@ -630,7 +632,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy53->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 		}
 		// Row 2 of enemies
@@ -652,7 +654,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy12->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy22 = scene->CreateGameObject("enemy22");
 			{
@@ -672,7 +674,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy22->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy32 = scene->CreateGameObject("enemy32");
 			{
@@ -692,7 +694,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy32->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy42 = scene->CreateGameObject("enemy42");
 			{
@@ -712,7 +714,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy42->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 			GameObject::Sptr enemy52 = scene->CreateGameObject("enemy52");
 			{
@@ -731,7 +733,7 @@ void DefaultSceneLayer::_CreateScene()
 				Light::Sptr lightComponent = enemy52->Add<Light>();
 				lightComponent->SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 				lightComponent->SetRadius(5);
-				lightComponent->SetIntensity(1);
+				lightComponent->SetIntensity(2);
 			}
 		}
 		GameObject::Sptr topShip = scene->CreateGameObject("topShip");
