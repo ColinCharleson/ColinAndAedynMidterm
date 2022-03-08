@@ -59,7 +59,7 @@ void Bolt::Update(float deltaTime)
 			if (boltOut == false)
 			{
 				boltOut = true;
-				fireTime = 1.f;
+				fireTime = 1.5f;
 			}
 		}
 	}
