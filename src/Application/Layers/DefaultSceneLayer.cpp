@@ -289,16 +289,33 @@ void DefaultSceneLayer::_CreateScene()
 
 		Material::Sptr displacementTest = ResourceManager::CreateAsset<Material>(displacementShader);
 		{
-			Texture2D::Sptr displacementMap = ResourceManager::CreateAsset<Texture2D>("textures/displacement_map.png");
-			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
-			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
+			Texture2D::Sptr displacementMap = ResourceManager::CreateAsset<Texture2D>("textures/terrain/concrete_Glossiness.png");
+			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/terrain/concrete_Normal.png");
+			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/terrain/concrete_Diffuse.png");
+			Texture2D::Sptr glossinessMap      = ResourceManager::CreateAsset<Texture2D>("textures/terrain/concrete_Glossiness.png");
 
 			displacementTest->Name = "Displacement Map";
 			displacementTest->Set("u_Material.AlbedoMap", diffuseMap);
 			displacementTest->Set("u_Material.NormalMap", normalMap);
+			displacementTest->Set("u_Material.GlossinessMap", glossinessMap);
 			displacementTest->Set("s_Heightmap", displacementMap);
 			displacementTest->Set("u_Material.Shininess", 0.5f);
 			displacementTest->Set("u_Scale", 0.1f);
+		}
+		Material::Sptr mudMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
+		{
+			Texture2D::Sptr displacementMap = ResourceManager::CreateAsset<Texture2D>("textures/terrain/mud_Height.png");
+			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/terrain/mud_Normal.png");
+			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/terrain/mud_Diffuse.png");
+			Texture2D::Sptr glossinessMap      = ResourceManager::CreateAsset<Texture2D>("textures/terrain/mud_Glossiness.png");
+
+			mudMaterial->Name = "Displacement Map";
+			mudMaterial->Set("u_Material.AlbedoMap", diffuseMap);
+			mudMaterial->Set("u_Material.NormalMap", normalMap);
+			mudMaterial->Set("u_Material.GlossinessMap", glossinessMap);
+			mudMaterial->Set("s_Heightmap", displacementMap);
+			mudMaterial->Set("u_Material.Shininess", 0.5f);
+			mudMaterial->Set("u_Scale", 0.1f);
 		}
 
 		Material::Sptr normalmapMat = ResourceManager::CreateAsset<Material>(deferredForward);
@@ -392,7 +409,7 @@ void DefaultSceneLayer::_CreateScene()
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = floor->Add<RenderComponent>();
 			renderer->SetMesh(tiledMesh);
-			renderer->SetMaterial(multiTextureMat);
+			renderer->SetMaterial(mudMaterial);
 		}
 
 		GameObject::Sptr player = scene->CreateGameObject("Player");
